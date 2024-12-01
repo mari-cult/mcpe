@@ -1,0 +1,30 @@
+[package]
+name = "mcpe"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+[dependencies.bevy]
+version = "0.15.0"
+default-features = false
+features = [
+    "animation",
+    "bevy_asset",
+    "bevy_audio",
+    "bevy_core_pipeline",
+    "bevy_state",
+    "bevy_render",
+    "bevy_pbr",
+    "bevy_ui",
+    "bevy_text",
+    "tonemapping_luts",
+    "bevy_sprite",
+    "bevy_winit",
+    "bevy_window",
+    "wayland",
+    "png",
+]
+
+[features]
+default = ["bevy/bevy_dev_tools"]

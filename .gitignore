@@ -1,0 +1,4 @@
+/target/
+/assets/
+.cache/
+.DS_Store
