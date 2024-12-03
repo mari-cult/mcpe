@@ -2,6 +2,7 @@ use bevy::{
 	app::{App, Startup},
 	asset::AssetServer,
 	image::{ImageLoaderSettings, ImageSampler},
+	math::Rect,
 	prelude::{
 		BuildChildren as _, Camera3d, ChildBuild as _, Commands, ImageNode,
 		PickingBehavior, Res, Text,
@@ -9,8 +10,9 @@ use bevy::{
 	sprite::{SliceScaleMode, TextureSlicer},
 	text::{JustifyText, TextFont, TextLayout},
 	ui::{
-		widget::NodeImageMode, Display, GridPlacement, GridTrack,
-		IsDefaultUiCamera, Node, UiBoxShadowSamples, UiRect, Val,
+		widget::NodeImageMode, AlignItems, Display, FlexDirection,
+		IsDefaultUiCamera, JustifyContent, Node, UiBoxShadowSamples, UiRect,
+		Val,
 	},
 	DefaultPlugins,
 };
@@ -38,8 +40,16 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 			settings.sampler = ImageSampler::nearest();
 		},
 	);
+
 	let logo = asset_server.load_with_settings(
 		"gui/title.png",
+		|settings: &mut ImageLoaderSettings| {
+			settings.sampler = ImageSampler::nearest();
+		},
+	);
+
+	let touchgui = asset_server.load_with_settings(
+		"gui/touchgui.png",
 		|settings: &mut ImageLoaderSettings| {
 			settings.sampler = ImageSampler::nearest();
 		},
@@ -55,18 +65,9 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 			Node {
 				width: Val::Percent(100.0),
 				height: Val::Percent(100.0),
-				display: Display::Grid,
-				grid_template_columns: vec![
-					GridTrack::fr(1.0),
-					GridTrack::fr(1.0),
-					GridTrack::fr(1.0),
-				],
-				grid_template_rows: vec![
-					GridTrack::fr(1.0),
-					GridTrack::fr(1.0),
-					GridTrack::fr(3.0),
-					GridTrack::fr(1.0),
-				],
+				display: Display::Flex,
+				flex_direction: FlexDirection::Column,
+				align_items: AlignItems::Center,
 				padding: UiRect::all(Val::Px(12.0)),
 				..Default::default()
 			},
@@ -80,10 +81,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 		.with_children(|parent| {
 			parent.spawn((
 				Node {
-					display: Display::Grid,
-					grid_column: GridPlacement::start(2),
-					max_width: Val::Px(512.0),
-					max_height: Val::Px(128.0),
+					display: Display::Flex,
+					width: Val::Percent(33.0),
 					..Default::default()
 				},
 				ImageNode {
@@ -94,8 +93,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 			parent.spawn((
 				Node {
-					display: Display::Grid,
-					grid_column: GridPlacement::start(2),
+					display: Display::Flex,
 					..Default::default()
 				},
 				Text::new("v0.2.0 alpha"),
@@ -106,5 +104,53 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 					..Default::default()
 				},
 			));
+
+			parent
+				.spawn((Node {
+					display: Display::Flex,
+					flex_direction: FlexDirection::Row,
+					width: Val::Percent(100.0),
+					height: Val::Percent(100.0),
+					padding: UiRect::top(Val::Px(50.0)),
+					justify_content: JustifyContent::SpaceEvenly,
+
+					..Default::default()
+				},))
+				.with_children(|parent| {
+					parent
+						.spawn((
+							Node {
+								display: Display::Flex,
+								width: Val::Px(300.0),
+								height: Val::Px(300.0),
+								padding: UiRect::all(Val::Px(36.0)),
+								justify_content: JustifyContent::Center,
+								..Default::default()
+							},
+							ImageNode {
+								image: touchgui.clone(),
+								rect: Some(Rect::new(0.0, 101.0, 75.0, 175.0)),
+								..Default::default()
+							},
+						))
+						.with_children(|parent| {
+							parent.spawn((
+								Node {
+									display: Display::Flex,
+									justify_content: JustifyContent::Center,
+									..Default::default()
+								},
+								Text::new("Start Game"),
+								TextLayout::new_with_justify(
+									JustifyText::Center,
+								),
+								TextFont {
+									font: font.clone(),
+									font_size: 28.0,
+									..Default::default()
+								},
+							));
+						});
+				});
 		});
 }
