@@ -1,12 +1,13 @@
 [package]
 name = "mcpe"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
+tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 [dependencies.bevy]
-version = "0.15.0"
+git = "https://github.com/bevyengine/bevy.git"
 default-features = false
 features = [
     "animation",
@@ -22,8 +23,14 @@ features = [
     "bevy_sprite",
     "bevy_winit",
     "bevy_window",
-    "wayland",
+    "bevy_picking",
+    "bevy_mesh_picking_backend",
+    "bevy_ui_picking_backend",
+    "bevy_ui_render",
+    "x11",
+    # "wayland",
     "png",
+    "zstd_rust",
 ]
 
 [features]

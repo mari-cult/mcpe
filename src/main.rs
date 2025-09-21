@@ -1,23 +1,22 @@
 use bevy::{
+	DefaultPlugins,
 	app::{App, Startup},
 	asset::AssetServer,
+	camera::Camera2d,
 	image::{ImageLoaderSettings, ImageSampler},
 	math::Rect,
-	prelude::{
-		BuildChildren as _, Camera3d, ChildBuild as _, Commands, ImageNode,
-		PickingBehavior, Res, Text,
-	},
+	picking::Pickable,
+	prelude::{Camera3d, Commands, ImageNode, Res, Text},
 	sprite::{SliceScaleMode, TextureSlicer},
-	text::{JustifyText, TextFont, TextLayout},
+	text::{Justify, TextFont, TextLayout},
 	ui::{
-		widget::NodeImageMode, AlignItems, Display, FlexDirection,
-		IsDefaultUiCamera, JustifyContent, Node, UiBoxShadowSamples, UiRect,
-		Val,
+		AlignItems, Display, FlexDirection, IsDefaultUiCamera, JustifyContent,
+		Node, UiRect, Val, widget::NodeImageMode,
 	},
-	DefaultPlugins,
 };
 
 fn main() {
+	tracing_subscriber::fmt::init();
 	App::new()
 		.add_plugins((DefaultPlugins,))
 		.add_systems(Startup, setup)
@@ -26,11 +25,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-	commands.spawn((
-		Camera3d::default(),
-		IsDefaultUiCamera,
-		UiBoxShadowSamples(6),
-	));
+	commands.spawn((Camera3d::default(), IsDefaultUiCamera));
 
 	let font = asset_server.load("font/Monocraft-SemiBold.otf");
 
@@ -77,7 +72,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 				..Default::default()
 			},
 		))
-		.insert(PickingBehavior::IGNORE)
+		.insert(Pickable::IGNORE)
 		.with_children(|parent| {
 			parent.spawn((
 				Node {
@@ -97,7 +92,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 					..Default::default()
 				},
 				Text::new("v0.2.0 alpha"),
-				TextLayout::new_with_justify(JustifyText::Center),
+				TextLayout::new_with_justify(Justify::Center),
 				TextFont {
 					font: font.clone(),
 					font_size: 28.0,
@@ -141,9 +136,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 									..Default::default()
 								},
 								Text::new("Start Game"),
-								TextLayout::new_with_justify(
-									JustifyText::Center,
-								),
+								TextLayout::new_with_justify(Justify::Center),
 								TextFont {
 									font: font.clone(),
 									font_size: 28.0,

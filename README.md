@@ -12,4 +12,3 @@ cd mcpe
 git clone https://github.com/theoparis/mcpe-assets assets
 cargo run
 ```
-
